@@ -1,52 +1,47 @@
-# Employee Feedback System
+# Utility Consumption Tracker
 
-A complete web-based employee feedback system that collects, stores, and analyzes employee motivation and energy levels with interactive dashboards and statistics.
+A complete web application for tracking energy and water consumption with real-time analytics and beautiful visualizations.
 
 ## Features
 
-### 📝 Feedback Collection
-- **User-friendly form** with modern UI using Tailwind CSS
-- **Structured data collection** including:
-  - Employee name (optional for anonymous feedback)
-  - Department selection
-  - Motivation level (1-10 scale)
-  - Energy level (1-10 scale)
-  - Detailed feedback text areas
-  - Improvement suggestions
-- **Real-time form validation** and submission feedback
-- **Responsive design** that works on all devices
+### � Data Collection
+- **Energy Meters**: Track readings from two separate energy meters (kWh)
+- **Water Meter**: Monitor water consumption (Liters)
+- **Date-based Tracking**: Record readings with specific dates
+- **Optional Metadata**: Add location and notes to readings
 
-### 📊 Statistics & Analytics
-- **Interactive dashboard** with visual charts
-- **Department-wise statistics** showing average motivation and energy levels
-- **Distribution charts** for motivation and energy levels
-- **Real-time data updates** with refresh functionality
-- **Export functionality** to CSV for further analysis
+### 📈 Analytics & Visualization
+- **Consumption Calculations**: Automatic calculation of daily, weekly, and monthly consumption
+- **Interactive Charts**: Beautiful charts powered by Chart.js
+  - Daily consumption trends (last 30 days)
+  - Energy vs Water distribution
+  - Monthly comparison charts
+- **Key Metrics Dashboard**: Quick overview of total consumption and averages
+- **Cost Estimation**: Estimated daily costs based on consumption
 
-### 💾 Data Management
-- **Persistent storage** using JSON files
-- **Automatic statistics calculation** and updates
-- **Data export** capabilities for external analysis
-- **Privacy-focused** with optional anonymization
+### 💾 Data Storage
+- **JSON File Storage**: All data stored in human-readable JSON files
+- **Automatic Calculations**: Real-time consumption calculations between readings
+- **Data Export**: Export all data to CSV format
+- **Statistics**: Comprehensive statistics automatically generated
 
-## Setup Instructions
+### 🎨 User Experience
+- **Modern UI**: Clean, responsive design with beautiful gradients
+- **Icons & Graphics**: FontAwesome icons for enhanced visual appeal
+- **Mobile Responsive**: Works perfectly on all device sizes
+- **Real-time Updates**: Dashboard updates automatically with new readings
+
+## Quick Start
 
 ### Prerequisites
-- Node.js (version 14 or higher)
-- npm or yarn package manager
+- Node.js (v14 or higher)
+- npm (Node Package Manager)
 
 ### Installation
 
-1. **Clone or download the project files**
+1. **Clone or download the project**
    ```bash
-   # If using git
-   git clone <repository-url>
-   cd employee-feedback-system
-   
-   # Or create a new directory and copy the files
-   mkdir employee-feedback-system
-   cd employee-feedback-system
-   # Copy all project files to this directory
+   cd utility-consumption-tracker
    ```
 
 2. **Install dependencies**
@@ -56,150 +51,171 @@ A complete web-based employee feedback system that collects, stores, and analyze
 
 3. **Start the server**
    ```bash
-   # For production
    npm start
-   
-   # For development (with auto-restart)
-   npm run dev
    ```
 
-4. **Access the application**
-   - **Feedback Form**: http://localhost:3000
-   - **Dashboard**: http://localhost:3000/dashboard
+4. **Open your browser**
+   - Main form: http://localhost:3000
+   - Dashboard: http://localhost:3000/dashboard
 
-## Usage
+## Usage Guide
 
-### For Employees (Submitting Feedback)
-1. Open http://localhost:3000 in your browser
-2. Fill out the feedback form:
-   - Enter your name (optional)
-   - Select your department
-   - Rate your motivation level (1-10)
-   - Rate your energy level (1-10)
-   - Provide detailed feedback in text areas
-   - Add suggestions for improvement
-3. Click "Submit Feedback"
-4. You'll see a success message when your feedback is saved
+### Adding Meter Readings
 
-### For Administrators (Viewing Statistics)
-1. Open http://localhost:3000/dashboard in your browser
-2. View comprehensive statistics including:
-   - Total feedback count
-   - Average motivation and energy levels
-   - Department-wise breakdown
-   - Visual charts and distributions
-3. Export data as CSV for further analysis
-4. Refresh data to see latest submissions
+1. **Navigate to the main page** (http://localhost:3000)
+2. **Fill in the form**:
+   - **Date**: Select the reading date (defaults to today)
+   - **Energy Meter 1**: Enter the current reading in kWh
+   - **Energy Meter 2**: Enter the second meter reading in kWh
+   - **Water Meter**: Enter the water meter reading in Liters
+   - **Location** (optional): Specify the location
+   - **Notes** (optional): Add any additional observations
 
-## Data Storage
+3. **Submit the reading** - The system will automatically calculate consumption based on previous readings
 
-The system stores data in the `data/` directory:
-- `feedback.json` - Contains all feedback submissions
-- `statistics.json` - Contains calculated statistics and summaries
+### Viewing Analytics
 
-### Data Structure
+1. **Open the Dashboard** (http://localhost:3000/dashboard)
+2. **Explore the analytics**:
+   - **Key Metrics**: View total readings, consumption, and estimated costs
+   - **Charts**: Analyze trends and patterns
+   - **Recent Readings**: Review the latest meter readings
+   - **Export Data**: Download all data as CSV
 
-Each feedback entry includes:
+### Understanding Consumption Calculations
+
+- **Daily Consumption**: Difference between consecutive day readings
+- **Weekly Consumption**: Sum of daily consumption over 7-day periods
+- **Monthly Consumption**: Sum of daily consumption over monthly periods
+- **Average Calculations**: Based on total consumption divided by time periods
+
+## Technical Details
+
+### Architecture
+- **Frontend**: HTML, CSS (Tailwind), JavaScript
+- **Backend**: Node.js with Express
+- **Charts**: Chart.js library
+- **Icons**: FontAwesome
+- **Data Storage**: JSON files in `/data` directory
+
+### API Endpoints
+- `POST /api/submit-reading` - Submit new meter reading
+- `GET /api/statistics` - Get consumption statistics
+- `GET /api/readings` - Get all meter readings
+- `GET /api/export-csv` - Export data as CSV
+
+### File Structure
+```
+utility-consumption-tracker/
+├── server.js           # Express server and API
+├── index.html          # Main form page
+├── dashboard.html      # Analytics dashboard
+├── package.json        # Dependencies and scripts
+├── README.md          # Documentation
+└── data/              # JSON data files (auto-created)
+    ├── meter-readings.json    # Raw meter readings
+    └── consumption-stats.json # Calculated statistics
+```
+
+### Data Schema
+
+#### Meter Reading
 ```json
 {
-  "id": "unique-uuid",
-  "employeeName": "John Doe",
-  "department": "Engineering",
-  "motivationLevel": 8,
-  "energyLevel": 7,
-  "motivationFactors": "Clear goals and supportive team",
-  "energyFactors": "Good work-life balance",
-  "suggestions": "More team building activities",
-  "timestamp": "2024-01-15T10:30:00.000Z",
+  "id": "uuid",
+  "date": "YYYY-MM-DD",
+  "energyMeter1": 1234.56,
+  "energyMeter2": 987.65,
+  "waterMeter": 45678.90,
+  "location": "Main Building",
+  "notes": "Monthly reading",
   "submittedAt": "2024-01-15T10:30:00.000Z"
 }
 ```
 
-## API Endpoints
-
-### POST /api/submit-feedback
-Submit new feedback data
-- **Body**: JSON object with feedback data
-- **Response**: Success/error message
-
-### GET /api/statistics
-Get calculated statistics
-- **Response**: JSON object with statistics
-
-### GET /api/feedback
-Get all feedback data (anonymized)
-- **Response**: Array of feedback objects
-
-### GET /api/export-csv
-Export feedback data as CSV
-- **Response**: CSV file download
+#### Statistics
+```json
+{
+  "totalReadings": 10,
+  "totalEnergyConsumption": 245.67,
+  "totalWaterConsumption": 1234.56,
+  "averageDailyEnergy": 8.19,
+  "averageDailyWater": 41.15,
+  "dailyConsumption": [...],
+  "weeklyConsumption": [...],
+  "monthlyConsumption": [...],
+  "lastUpdated": "2024-01-15T10:30:00.000Z"
+}
+```
 
 ## Customization
 
-### Adding New Departments
-Edit the department options in `index.html`:
-```html
-<option value="Your Department">Your Department</option>
+### Adjusting Cost Calculations
+Edit the cost rates in `dashboard.html`:
+```javascript
+const energyCostPerKwh = 0.12; // $0.12 per kWh
+const waterCostPerL = 0.002;   // $0.002 per liter
 ```
 
-### Modifying Form Fields
-Add new fields to the form in `index.html` and update the submission handling in both frontend JavaScript and `server.js`.
+### Styling
+- Modify colors and gradients in the CSS sections
+- Tailwind classes can be adjusted for different styling
+- Icon colors and styles can be customized
 
-### Styling Changes
-The system uses Tailwind CSS. Modify classes in the HTML files to change the appearance.
+### Adding More Meters
+To track additional meters, modify:
+1. Form fields in `index.html`
+2. Data processing in `server.js`
+3. Chart configurations in `dashboard.html`
 
-## Security Considerations
+## Data Management
 
-- **Data Privacy**: Employee names are optional and can be anonymized
-- **Input Validation**: Server-side validation prevents malicious data
-- **CORS Protection**: Configured for secure cross-origin requests
-- **File Security**: Data files are stored server-side only
+### Backup
+Regularly backup the `/data` directory containing your JSON files.
+
+### Reset Data
+To start fresh, delete the files in `/data` directory. They will be recreated automatically.
+
+### Migration
+JSON files can be easily migrated between installations or converted to other formats.
 
 ## Troubleshooting
 
-### Common Issues
+### Server Won't Start
+- Check if Node.js is installed: `node --version`
+- Ensure port 3000 is available
+- Check for error messages in terminal
 
-1. **Port already in use**
-   - Change the port in `server.js`: `const PORT = process.env.PORT || 3001;`
+### Data Not Saving
+- Verify write permissions in project directory
+- Check browser console for error messages
+- Ensure `/data` directory exists and is writable
 
-2. **Dependencies not installed**
-   - Run `npm install` to install required packages
+### Charts Not Displaying
+- Check internet connection (Chart.js loads from CDN)
+- Verify browser console for JavaScript errors
+- Ensure JSON data format is correct
 
-3. **Data not saving**
-   - Check that the server has write permissions to the project directory
-   - Verify the `data/` directory is created automatically
-
-4. **Dashboard not loading**
-   - Check browser console for errors
-   - Verify the API endpoints are working by visiting them directly
-
-### Development
-
-To modify the system:
-1. Edit HTML files for frontend changes
-2. Modify `server.js` for backend logic
-3. Update `package.json` for new dependencies
-4. Test thoroughly before deployment
-
-## Production Deployment
-
-For production use:
-1. Use environment variables for configuration
-2. Set up proper logging
-3. Use a process manager like PM2
-4. Configure reverse proxy (nginx/Apache)
-5. Set up regular backups of the data directory
-6. Configure SSL/HTTPS
+## Browser Support
+- Chrome (recommended)
+- Firefox
+- Safari
+- Edge
+- Mobile browsers
 
 ## Contributing
 
-To contribute to this project:
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
+Feel free to enhance the application by:
+- Adding new chart types
+- Implementing additional metrics
+- Improving the UI/UX
+- Adding data validation
+- Creating data import features
 
 ## License
 
-This project is open source and available under the MIT License.
+MIT License - Feel free to use and modify for your needs.
+
+---
+
+**Made with ❤️ for efficient utility tracking**

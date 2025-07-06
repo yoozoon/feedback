@@ -1,330 +1,524 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="" />
-    <link
-      rel="stylesheet"
-      as="style"
-      onload="this.rel='stylesheet'"
-      href="https://fonts.googleapis.com/css2?display=swap&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900&amp;family=Public+Sans%3Awght%40400%3B500%3B700%3B900"
-    />
-    <title>PulseCheck Dashboard</title>
-    <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64," />
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consumption Dashboard - Utility Tracker</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/date-fns@2.29.3/index.min.js"></script>
+    
     <style>
-        .stat-card {
-            @apply bg-white rounded-lg shadow-md p-6 border border-gray-200;
+        body {
+            font-family: 'Inter', sans-serif;
         }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .card-shadow {
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .icon-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .stat-card {
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+        
+        .loading-spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
         .chart-container {
-            @apply bg-white rounded-lg shadow-md p-6 border border-gray-200;
+            position: relative;
+            height: 400px;
+        }
+        
+        .metric-trend {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.375rem;
+        }
+        
+        .trend-up {
+            background-color: #fef2f2;
+            color: #dc2626;
+        }
+        
+        .trend-down {
+            background-color: #f0fdf4;
+            color: #16a34a;
         }
     </style>
 </head>
-<body class="bg-gray-50">
-    <div class="min-h-screen" style="font-family: 'Public Sans', 'Noto Sans', sans-serif;">
-        <!-- Header -->
-        <header class="bg-white shadow-sm border-b border-gray-200">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between items-center py-4">
-                    <div class="flex items-center gap-4">
-                        <div class="w-8 h-8">
-                            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M44 11.2727C44 14.0109 39.8386 16.3957 33.69 17.6364C39.8386 18.877 44 21.2618 44 24C44 26.7382 39.8386 29.123 33.69 30.3636C39.8386 31.6043 44 33.9891 44 36.7273C44 40.7439 35.0457 44 24 44C12.9543 44 4 40.7439 4 36.7273C4 33.9891 8.16144 31.6043 14.31 30.3636C8.16144 29.123 4 26.7382 4 24C4 21.2618 8.16144 18.877 14.31 17.6364C8.16144 16.3957 4 14.0109 4 11.2727C4 7.25611 12.9543 4 24 4C35.0457 4 44 7.25611 44 11.2727Z" fill="#3f8cbf"></path>
-                            </svg>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <header class="gradient-bg text-white shadow-lg">
+        <div class="container mx-auto px-4 py-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <i class="fas fa-chart-line text-3xl"></i>
+                    <h1 class="text-2xl font-bold">Consumption Dashboard</h1>
+                </div>
+                <nav class="flex space-x-6">
+                    <a href="/" class="hover:text-blue-200 transition-colors duration-200 flex items-center space-x-1">
+                        <i class="fas fa-home"></i>
+                        <span>Home</span>
+                    </a>
+                    <a href="/dashboard" class="text-blue-200 flex items-center space-x-1">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <button onclick="exportData()" class="hover:text-blue-200 transition-colors duration-200 flex items-center space-x-1">
+                        <i class="fas fa-download"></i>
+                        <span>Export</span>
+                    </button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- Loading State -->
+        <div id="loadingState" class="text-center py-12">
+            <div class="loading-spinner mx-auto mb-4"></div>
+            <p class="text-gray-600">Loading dashboard data...</p>
+        </div>
+
+        <!-- Dashboard Content -->
+        <div id="dashboardContent" class="hidden">
+            <!-- Key Metrics -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <!-- Total Readings -->
+                <div class="bg-white rounded-xl card-shadow p-6 stat-card">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-600 text-sm font-medium">Total Readings</p>
+                            <p class="text-3xl font-bold text-gray-800" id="totalReadings">0</p>
                         </div>
-                        <h1 class="text-2xl font-bold text-gray-900">PulseCheck Dashboard</h1>
+                        <div class="bg-blue-100 p-3 rounded-full">
+                            <i class="fas fa-database text-blue-600 text-xl"></i>
+                        </div>
                     </div>
-                    <div class="flex items-center gap-4">
-                        <a href="/" class="text-gray-600 hover:text-gray-900 font-medium">Back to Form</a>
-                        <button id="exportBtn" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 font-medium">
-                            Export CSV
-                        </button>
-                        <button id="refreshBtn" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 font-medium">
-                            Refresh
-                        </button>
+                    <div class="mt-4">
+                        <span class="metric-trend trend-up" id="readingsTrend">
+                            <i class="fas fa-arrow-up"></i> +12%
+                        </span>
+                        <span class="text-gray-500 text-sm ml-2">vs last month</span>
+                    </div>
+                </div>
+
+                <!-- Total Energy Consumption -->
+                <div class="bg-white rounded-xl card-shadow p-6 stat-card">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-600 text-sm font-medium">Total Energy</p>
+                            <p class="text-3xl font-bold text-yellow-600" id="totalEnergy">0 kWh</p>
+                        </div>
+                        <div class="bg-yellow-100 p-3 rounded-full">
+                            <i class="fas fa-bolt text-yellow-600 text-xl"></i>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <span class="metric-trend trend-down" id="energyTrend">
+                            <i class="fas fa-arrow-down"></i> -5%
+                        </span>
+                        <span class="text-gray-500 text-sm ml-2">vs last month</span>
+                    </div>
+                </div>
+
+                <!-- Total Water Consumption -->
+                <div class="bg-white rounded-xl card-shadow p-6 stat-card">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-600 text-sm font-medium">Total Water</p>
+                            <p class="text-3xl font-bold text-blue-600" id="totalWater">0 L</p>
+                        </div>
+                        <div class="bg-blue-100 p-3 rounded-full">
+                            <i class="fas fa-tint text-blue-600 text-xl"></i>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <span class="metric-trend trend-up" id="waterTrend">
+                            <i class="fas fa-arrow-up"></i> +8%
+                        </span>
+                        <span class="text-gray-500 text-sm ml-2">vs last month</span>
+                    </div>
+                </div>
+
+                <!-- Average Daily Cost -->
+                <div class="bg-white rounded-xl card-shadow p-6 stat-card">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-600 text-sm font-medium">Est. Daily Cost</p>
+                            <p class="text-3xl font-bold text-green-600" id="dailyCost">$0.00</p>
+                        </div>
+                        <div class="bg-green-100 p-3 rounded-full">
+                            <i class="fas fa-dollar-sign text-green-600 text-xl"></i>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <span class="metric-trend trend-down" id="costTrend">
+                            <i class="fas fa-arrow-down"></i> -3%
+                        </span>
+                        <span class="text-gray-500 text-sm ml-2">vs last month</span>
                     </div>
                 </div>
             </div>
-        </header>
 
-        <!-- Main Content -->
-        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <!-- Loading State -->
-            <div id="loading" class="text-center py-8">
-                <div class="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto"></div>
-                <p class="mt-4 text-gray-600">Loading dashboard...</p>
+            <!-- Charts Section -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <!-- Daily Consumption Chart -->
+                <div class="bg-white rounded-xl card-shadow p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-lg font-semibold text-gray-800 flex items-center">
+                            <i class="fas fa-chart-line icon-gradient mr-2"></i>
+                            Daily Consumption (Last 30 Days)
+                        </h3>
+                        <div class="flex space-x-2">
+                            <button onclick="updateChart('daily')" class="px-3 py-1 text-sm bg-blue-100 text-blue-600 rounded-md">
+                                Daily
+                            </button>
+                            <button onclick="updateChart('weekly')" class="px-3 py-1 text-sm bg-gray-100 text-gray-600 rounded-md">
+                                Weekly
+                            </button>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="consumptionChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Consumption Distribution -->
+                <div class="bg-white rounded-xl card-shadow p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-6 flex items-center">
+                        <i class="fas fa-chart-pie icon-gradient mr-2"></i>
+                        Energy vs Water Distribution
+                    </h3>
+                    <div class="chart-container">
+                        <canvas id="distributionChart"></canvas>
+                    </div>
+                </div>
             </div>
 
-            <!-- Dashboard Content -->
-            <div id="dashboard" class="hidden">
-                <!-- Summary Cards -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                    <div class="stat-card">
-                        <div class="flex items-center">
-                            <div class="p-3 rounded-full bg-blue-100">
-                                <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                </svg>
-                            </div>
-                            <div class="ml-4">
-                                <p class="text-sm text-gray-600">Total Feedback</p>
-                                <p id="totalFeedback" class="text-2xl font-bold text-gray-900">0</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="stat-card">
-                        <div class="flex items-center">
-                            <div class="p-3 rounded-full bg-green-100">
-                                <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                                </svg>
-                            </div>
-                            <div class="ml-4">
-                                <p class="text-sm text-gray-600">Avg Motivation</p>
-                                <p id="avgMotivation" class="text-2xl font-bold text-gray-900">0</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="stat-card">
-                        <div class="flex items-center">
-                            <div class="p-3 rounded-full bg-yellow-100">
-                                <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
-                                </svg>
-                            </div>
-                            <div class="ml-4">
-                                <p class="text-sm text-gray-600">Avg Energy</p>
-                                <p id="avgEnergy" class="text-2xl font-bold text-gray-900">0</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="stat-card">
-                        <div class="flex items-center">
-                            <div class="p-3 rounded-full bg-purple-100">
-                                <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                                </svg>
-                            </div>
-                            <div class="ml-4">
-                                <p class="text-sm text-gray-600">Departments</p>
-                                <p id="totalDepartments" class="text-2xl font-bold text-gray-900">0</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Charts Section -->
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-                    <!-- Motivation Distribution Chart -->
-                    <div class="chart-container">
-                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Motivation Level Distribution</h3>
-                        <div class="h-64">
-                            <canvas id="motivationChart"></canvas>
-                        </div>
-                    </div>
-
-                    <!-- Energy Distribution Chart -->
-                    <div class="chart-container">
-                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Energy Level Distribution</h3>
-                        <div class="h-64">
-                            <canvas id="energyChart"></canvas>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Department Statistics -->
-                <div class="chart-container mb-8">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Department Statistics</h3>
-                    <div class="h-64">
-                        <canvas id="departmentChart"></canvas>
-                    </div>
-                </div>
-
-                <!-- Department Details Table -->
+            <!-- Monthly Comparison -->
+            <div class="bg-white rounded-xl card-shadow p-6 mb-8">
+                <h3 class="text-lg font-semibold text-gray-800 mb-6 flex items-center">
+                    <i class="fas fa-chart-bar icon-gradient mr-2"></i>
+                    Monthly Consumption Trends
+                </h3>
                 <div class="chart-container">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Department Details</h3>
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full table-auto">
-                            <thead>
-                                <tr class="bg-gray-50">
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Department</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Responses</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Avg Motivation</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Avg Energy</th>
-                                </tr>
-                            </thead>
-                            <tbody id="departmentTable" class="bg-white divide-y divide-gray-200">
-                                <!-- Table rows will be populated by JavaScript -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- Last Updated -->
-                <div class="mt-8 text-center text-sm text-gray-500">
-                    Last updated: <span id="lastUpdated">-</span>
+                    <canvas id="monthlyChart"></canvas>
                 </div>
             </div>
-        </main>
-    </div>
+
+            <!-- Recent Readings Table -->
+            <div class="bg-white rounded-xl card-shadow p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-lg font-semibold text-gray-800 flex items-center">
+                        <i class="fas fa-list icon-gradient mr-2"></i>
+                        Recent Meter Readings
+                    </h3>
+                    <button onclick="refreshData()" class="flex items-center space-x-2 text-blue-600 hover:text-blue-800">
+                        <i class="fas fa-sync-alt"></i>
+                        <span>Refresh</span>
+                    </button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="border-b border-gray-200">
+                                <th class="text-left py-3 px-4 font-semibold text-gray-700">Date</th>
+                                <th class="text-left py-3 px-4 font-semibold text-gray-700">Energy 1 (kWh)</th>
+                                <th class="text-left py-3 px-4 font-semibold text-gray-700">Energy 2 (kWh)</th>
+                                <th class="text-left py-3 px-4 font-semibold text-gray-700">Water (L)</th>
+                                <th class="text-left py-3 px-4 font-semibold text-gray-700">Location</th>
+                            </tr>
+                        </thead>
+                        <tbody id="readingsTable">
+                            <!-- Table content will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
 
     <script>
-        let motivationChart, energyChart, departmentChart;
+        let consumptionChart, distributionChart, monthlyChart;
+        let dashboardData = null;
 
-        async function loadDashboard() {
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            loadDashboardData();
+        });
+
+        async function loadDashboardData() {
             try {
-                const response = await fetch('/api/statistics');
-                const stats = await response.json();
-                
-                // Update summary cards
-                document.getElementById('totalFeedback').textContent = stats.totalFeedbacks;
-                document.getElementById('avgMotivation').textContent = stats.motivationStats.average.toFixed(1);
-                document.getElementById('avgEnergy').textContent = stats.energyStats.average.toFixed(1);
-                document.getElementById('totalDepartments').textContent = Object.keys(stats.departmentStats).length;
-                document.getElementById('lastUpdated').textContent = new Date(stats.lastUpdated).toLocaleString();
+                // Load statistics and readings
+                const [statsResponse, readingsResponse] = await Promise.all([
+                    fetch('/api/statistics'),
+                    fetch('/api/readings')
+                ]);
 
-                // Create charts
-                createMotivationChart(stats.motivationStats.distribution);
-                createEnergyChart(stats.energyStats.distribution);
-                createDepartmentChart(stats.departmentStats);
-                
-                // Update department table
-                updateDepartmentTable(stats.departmentStats);
-
-                // Show dashboard
-                document.getElementById('loading').classList.add('hidden');
-                document.getElementById('dashboard').classList.remove('hidden');
+                if (statsResponse.ok && readingsResponse.ok) {
+                    const stats = await statsResponse.json();
+                    const readings = await readingsResponse.json();
+                    
+                    dashboardData = { stats, readings };
+                    
+                    updateKeyMetrics(stats);
+                    createCharts(stats);
+                    updateReadingsTable(readings);
+                    
+                    // Hide loading and show dashboard
+                    document.getElementById('loadingState').classList.add('hidden');
+                    document.getElementById('dashboardContent').classList.remove('hidden');
+                } else {
+                    throw new Error('Failed to load dashboard data');
+                }
             } catch (error) {
                 console.error('Error loading dashboard:', error);
-                document.getElementById('loading').innerHTML = '<p class="text-red-600">Error loading dashboard. Please try again.</p>';
+                document.getElementById('loadingState').innerHTML = `
+                    <i class="fas fa-exclamation-triangle text-red-500 text-3xl mb-4"></i>
+                    <p class="text-red-600">Error loading dashboard data</p>
+                    <button onclick="loadDashboardData()" class="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                        Try Again
+                    </button>
+                `;
             }
         }
 
-        function createMotivationChart(distribution) {
-            const ctx = document.getElementById('motivationChart').getContext('2d');
-            if (motivationChart) motivationChart.destroy();
+        function updateKeyMetrics(stats) {
+            document.getElementById('totalReadings').textContent = stats.totalReadings || 0;
+            document.getElementById('totalEnergy').textContent = 
+                (stats.totalEnergyConsumption || 0).toFixed(2) + ' kWh';
+            document.getElementById('totalWater').textContent = 
+                (stats.totalWaterConsumption || 0).toFixed(2) + ' L';
             
-            motivationChart = new Chart(ctx, {
-                type: 'bar',
+            // Calculate estimated daily cost (example rates)
+            const energyCostPerKwh = 0.12; // $0.12 per kWh
+            const waterCostPerL = 0.002; // $0.002 per liter
+            const dailyCost = 
+                (stats.averageDailyEnergy || 0) * energyCostPerKwh + 
+                (stats.averageDailyWater || 0) * waterCostPerL;
+            document.getElementById('dailyCost').textContent = '$' + dailyCost.toFixed(2);
+        }
+
+        function createCharts(stats) {
+            // Daily Consumption Chart
+            const ctx1 = document.getElementById('consumptionChart').getContext('2d');
+            consumptionChart = new Chart(ctx1, {
+                type: 'line',
                 data: {
-                    labels: Object.keys(distribution),
+                    labels: stats.dailyConsumption?.map(d => d.date.slice(-5)) || [],
+                    datasets: [
+                        {
+                            label: 'Energy (kWh)',
+                            data: stats.dailyConsumption?.map(d => d.energy) || [],
+                            borderColor: '#f59e0b',
+                            backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        },
+                        {
+                            label: 'Water (L)',
+                            data: stats.dailyConsumption?.map(d => d.water) || [],
+                            borderColor: '#3b82f6',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            // Distribution Chart
+            const ctx2 = document.getElementById('distributionChart').getContext('2d');
+            distributionChart = new Chart(ctx2, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Energy', 'Water (scaled)'],
                     datasets: [{
-                        label: 'Number of Responses',
-                        data: Object.values(distribution),
-                        backgroundColor: 'rgba(34, 197, 94, 0.6)',
-                        borderColor: 'rgba(34, 197, 94, 1)',
-                        borderWidth: 1
+                        data: [
+                            stats.totalEnergyConsumption || 0,
+                            (stats.totalWaterConsumption || 0) / 100 // Scale water for better visualization
+                        ],
+                        backgroundColor: ['#f59e0b', '#3b82f6'],
+                        borderWidth: 0
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                        }
+                    }
+                }
+            });
+
+            // Monthly Chart
+            const ctx3 = document.getElementById('monthlyChart').getContext('2d');
+            monthlyChart = new Chart(ctx3, {
+                type: 'bar',
+                data: {
+                    labels: stats.monthlyConsumption?.map(m => m.month) || [],
+                    datasets: [
+                        {
+                            label: 'Energy (kWh)',
+                            data: stats.monthlyConsumption?.map(m => m.energy) || [],
+                            backgroundColor: '#f59e0b',
+                            borderRadius: 4
+                        },
+                        {
+                            label: 'Water (L)',
+                            data: stats.monthlyConsumption?.map(m => m.water) || [],
+                            backgroundColor: '#3b82f6',
+                            borderRadius: 4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
+                    },
                     scales: {
                         y: {
-                            beginAtZero: true,
-                            ticks: {
-                                stepSize: 1
-                            }
+                            beginAtZero: true
                         }
                     }
                 }
             });
         }
 
-        function createEnergyChart(distribution) {
-            const ctx = document.getElementById('energyChart').getContext('2d');
-            if (energyChart) energyChart.destroy();
-            
-            energyChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: Object.keys(distribution),
-                    datasets: [{
-                        label: 'Number of Responses',
-                        data: Object.values(distribution),
-                        backgroundColor: 'rgba(251, 191, 36, 0.6)',
-                        borderColor: 'rgba(251, 191, 36, 1)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                stepSize: 1
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
-        function createDepartmentChart(departmentStats) {
-            const ctx = document.getElementById('departmentChart').getContext('2d');
-            if (departmentChart) departmentChart.destroy();
-            
-            const departments = Object.keys(departmentStats);
-            const motivationData = departments.map(dept => departmentStats[dept].avgMotivation);
-            const energyData = departments.map(dept => departmentStats[dept].avgEnergy);
-            
-            departmentChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: departments,
-                    datasets: [{
-                        label: 'Average Motivation',
-                        data: motivationData,
-                        backgroundColor: 'rgba(34, 197, 94, 0.6)',
-                        borderColor: 'rgba(34, 197, 94, 1)',
-                        borderWidth: 1
-                    }, {
-                        label: 'Average Energy',
-                        data: energyData,
-                        backgroundColor: 'rgba(251, 191, 36, 0.6)',
-                        borderColor: 'rgba(251, 191, 36, 1)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            max: 10
-                        }
-                    }
-                }
-            });
-        }
-
-        function updateDepartmentTable(departmentStats) {
-            const tableBody = document.getElementById('departmentTable');
+        function updateReadingsTable(readings) {
+            const tableBody = document.getElementById('readingsTable');
             tableBody.innerHTML = '';
-            
-            Object.entries(departmentStats).forEach(([dept, stats]) => {
+
+            // Show last 10 readings
+            const recentReadings = readings.slice(-10).reverse();
+
+            recentReadings.forEach(reading => {
                 const row = document.createElement('tr');
+                row.className = 'border-b border-gray-100 hover:bg-gray-50';
                 row.innerHTML = `
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${dept}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${stats.count}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${stats.avgMotivation.toFixed(1)}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${stats.avgEnergy.toFixed(1)}</td>
+                    <td class="py-3 px-4">${new Date(reading.date).toLocaleDateString()}</td>
+                    <td class="py-3 px-4">${reading.energyMeter1.toFixed(2)}</td>
+                    <td class="py-3 px-4">${reading.energyMeter2.toFixed(2)}</td>
+                    <td class="py-3 px-4">${reading.waterMeter.toFixed(2)}</td>
+                    <td class="py-3 px-4">${reading.location || '-'}</td>
                 `;
                 tableBody.appendChild(row);
             });
+
+            if (recentReadings.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="text-center py-8 text-gray-500">
+                            <i class="fas fa-inbox text-3xl mb-2 block"></i>
+                            No readings available yet
+                        </td>
+                    </tr>
+                `;
+            }
         }
 
-        // Event listeners
-        document.getElementById('refreshBtn').addEventListener('click', loadDashboard);
-        
-        document.getElementById('exportBtn').addEventListener('click', async () => {
+        function updateChart(period) {
+            if (!dashboardData) return;
+
+            // Update button styles
+            document.querySelectorAll('button[onclick^="updateChart"]').forEach(btn => {
+                btn.className = 'px-3 py-1 text-sm bg-gray-100 text-gray-600 rounded-md';
+            });
+            event.target.className = 'px-3 py-1 text-sm bg-blue-100 text-blue-600 rounded-md';
+
+            // Update chart data based on period
+            const stats = dashboardData.stats;
+            let data, labels;
+
+            if (period === 'weekly') {
+                data = stats.weeklyConsumption || [];
+                labels = data.map(w => w.week);
+            } else {
+                data = stats.dailyConsumption || [];
+                labels = data.map(d => d.date.slice(-5));
+            }
+
+            consumptionChart.data.labels = labels;
+            consumptionChart.data.datasets[0].data = data.map(d => d.energy);
+            consumptionChart.data.datasets[1].data = data.map(d => d.water);
+            consumptionChart.update();
+        }
+
+        async function refreshData() {
+            const refreshButton = event.target.closest('button');
+            const originalHTML = refreshButton.innerHTML;
+            
+            refreshButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Refreshing...</span>';
+            refreshButton.disabled = true;
+            
+            try {
+                await loadDashboardData();
+            } finally {
+                refreshButton.innerHTML = originalHTML;
+                refreshButton.disabled = false;
+            }
+        }
+
+        async function exportData() {
             try {
                 const response = await fetch('/api/export-csv');
                 if (response.ok) {
@@ -332,20 +526,19 @@
                     const url = window.URL.createObjectURL(blob);
                     const a = document.createElement('a');
                     a.href = url;
-                    a.download = 'feedback_data.csv';
+                    a.download = 'meter_readings.csv';
+                    document.body.appendChild(a);
                     a.click();
                     window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
                 } else {
-                    alert('Error exporting data. Please try again.');
+                    alert('Export failed. Please try again.');
                 }
             } catch (error) {
-                console.error('Error exporting CSV:', error);
-                alert('Error exporting data. Please try again.');
+                console.error('Export error:', error);
+                alert('Export failed. Please try again.');
             }
-        });
-
-        // Load dashboard on page load
-        loadDashboard();
+        }
     </script>
 </body>
 </html>

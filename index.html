@@ -1,265 +1,369 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="" />
-    <link
-      rel="stylesheet"
-      as="style"
-      onload="this.rel='stylesheet'"
-      href="https://fonts.googleapis.com/css2?display=swap&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900&amp;family=Public+Sans%3Awght%40400%3B500%3B700%3B900"
-    />
-
-    <title>Stitch Design</title>
-    <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64," />
-
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-  </head>
-  <body>
-    <div
-      class="relative flex size-full min-h-screen flex-col bg-white group/design-root overflow-x-hidden"
-      style='--select-button-svg: url(&apos;data:image/svg+xml,%3csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2724px%27 height=%2724px%27 fill=%27rgb(106,120,129)%27 viewBox=%270 0 256 256%27%3e%3cpath d=%27M181.66,170.34a8,8,0,0,1,0,11.32l-48,48a8,8,0,0,1-11.32,0l-48-48a8,8,0,0,1,11.32-11.32L128,212.69l42.34-42.35A8,8,0,0,1,181.66,170.34Zm-96-84.68L128,43.31l42.34,42.35a8,8,0,0,0,11.32-11.32l-48-48a8,8,0,0,0-11.32,0l-48,48A8,8,0,0,0,85.66,85.66Z%27%3e%3c/path%3e%3c/svg%3e&apos;); font-family: "Public Sans", "Noto Sans", sans-serif;'
-    >
-      <div class="layout-container flex h-full grow flex-col">
-        <header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#f1f3f4] px-10 py-3">
-          <div class="flex items-center gap-4 text-[#121516]">
-            <div class="size-4">
-              <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path
-                  d="M44 11.2727C44 14.0109 39.8386 16.3957 33.69 17.6364C39.8386 18.877 44 21.2618 44 24C44 26.7382 39.8386 29.123 33.69 30.3636C39.8386 31.6043 44 33.9891 44 36.7273C44 40.7439 35.0457 44 24 44C12.9543 44 4 40.7439 4 36.7273C4 33.9891 8.16144 31.6043 14.31 30.3636C8.16144 29.123 4 26.7382 4 24C4 21.2618 8.16144 18.877 14.31 17.6364C8.16144 16.3957 4 14.0109 4 11.2727C4 7.25611 12.9543 4 24 4C35.0457 4 44 7.25611 44 11.2727Z"
-                  fill="currentColor"
-                ></path>
-              </svg>
-            </div>
-            <h2 class="text-[#121516] text-lg font-bold leading-tight tracking-[-0.015em]">PulseCheck</h2>
-          </div>
-          <div class="flex flex-1 justify-end gap-8">
-            <div class="flex items-center gap-9">
-              <a class="text-[#121516] text-sm font-medium leading-normal" href="#">Home</a>
-              <a class="text-[#121516] text-sm font-medium leading-normal" href="/dashboard">Dashboard</a>
-              <a class="text-[#121516] text-sm font-medium leading-normal" href="#">Resources</a>
-            </div>
-            <div
-              class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10"
-              style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCS7DzfrHYsvoejGMbUkrC9FMYztYxH5eDC2_4ApcWxRfMp9TLtGY-N_ksl7oBBeVbHQpuppuq64rUb0hYNONCpgRcg9792_qxRyiiCmCpQJm0XdGyIxQqMEaeYuk7iBBj3uZIwFV6X4O3u7En6IKSMVaG4ohclJjeahAGeuv9gBynjw6u7MPW3CCfBuGh9EqJdBoBG3tXmKuzQzU3na2EWaiiTzMO8GubhO3fE5pLL--k2jftahUJWfGd_Y3Y5anMZA2oM0CwL5lw");'
-            ></div>
-          </div>
-        </header>
-        <div class="px-40 flex flex-1 justify-center py-5">
-          <div class="layout-content-container flex flex-col w-[512px] max-w-[512px] py-5 max-w-[960px] flex-1">
-            <div class="flex flex-wrap justify-between gap-3 p-4">
-              <p class="text-[#121516] tracking-light text-[32px] font-bold leading-tight min-w-72">Employee Feedback Form</p>
-            </div>
-            <p class="text-[#121516] text-base font-normal leading-normal pb-3 pt-1 px-4">
-              Welcome to the Employee Feedback Form. Your input is valuable in helping us understand and improve your work experience. Please take a few moments to share your
-              thoughts on your current motivation and energy levels. Your responses will be kept confidential and used to enhance our workplace environment.
-            </p>
-            
-            <!-- Success Message -->
-            <div id="successMessage" class="hidden px-4 py-3 mb-4 text-green-700 bg-green-100 border border-green-300 rounded-lg">
-              <p class="font-medium">Thank you for your feedback! Your response has been submitted successfully.</p>
-            </div>
-            
-            <!-- Error Message -->
-            <div id="errorMessage" class="hidden px-4 py-3 mb-4 text-red-700 bg-red-100 border border-red-300 rounded-lg">
-              <p class="font-medium">There was an error submitting your feedback. Please try again.</p>
-            </div>
-            
-            <form id="feedbackForm" onsubmit="submitFeedback(event)">
-              <h3 class="text-[#121516] text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4">Motivation and Energy Levels</h3>
-              
-              <!-- Employee Name -->
-              <div class="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
-                <label class="flex flex-col min-w-40 flex-1">
-                  <p class="text-[#121516] text-base font-medium leading-normal pb-2">Employee Name (Optional)</p>
-                  <input
-                    type="text"
-                    name="employeeName"
-                    placeholder="Enter your name (optional for anonymous feedback)"
-                    class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121516] focus:outline-0 focus:ring-0 border border-[#dde1e3] bg-white focus:border-[#dde1e3] h-14 placeholder:text-[#6a7881] p-[15px] text-base font-normal leading-normal"
-                  />
-                </label>
-              </div>
-              
-              <!-- Department -->
-              <div class="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
-                <label class="flex flex-col min-w-40 flex-1">
-                  <p class="text-[#121516] text-base font-medium leading-normal pb-2">Department</p>
-                  <select
-                    name="department"
-                    required
-                    class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121516] focus:outline-0 focus:ring-0 border border-[#dde1e3] bg-white focus:border-[#dde1e3] h-14 bg-[image:--select-button-svg] placeholder:text-[#6a7881] p-[15px] text-base font-normal leading-normal"
-                  >
-                    <option value="">Select Department</option>
-                    <option value="Engineering">Engineering</option>
-                    <option value="Marketing">Marketing</option>
-                    <option value="Sales">Sales</option>
-                    <option value="HR">Human Resources</option>
-                    <option value="Finance">Finance</option>
-                    <option value="Operations">Operations</option>
-                    <option value="Customer Service">Customer Service</option>
-                    <option value="Other">Other</option>
-                  </select>
-                </label>
-              </div>
-              
-              <!-- Motivation Level -->
-              <div class="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
-                <label class="flex flex-col min-w-40 flex-1">
-                  <p class="text-[#121516] text-base font-medium leading-normal pb-2">Current Motivation Level (1-10)</p>
-                  <select
-                    name="motivationLevel"
-                    required
-                    class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121516] focus:outline-0 focus:ring-0 border border-[#dde1e3] bg-white focus:border-[#dde1e3] h-14 bg-[image:--select-button-svg] placeholder:text-[#6a7881] p-[15px] text-base font-normal leading-normal"
-                  >
-                    <option value="">Select Level</option>
-                    <option value="1">1 - Very Low</option>
-                    <option value="2">2 - Low</option>
-                    <option value="3">3 - Below Average</option>
-                    <option value="4">4 - Slightly Below Average</option>
-                    <option value="5">5 - Average</option>
-                    <option value="6">6 - Slightly Above Average</option>
-                    <option value="7">7 - Above Average</option>
-                    <option value="8">8 - High</option>
-                    <option value="9">9 - Very High</option>
-                    <option value="10">10 - Extremely High</option>
-                  </select>
-                </label>
-              </div>
-              
-              <!-- Energy Level -->
-              <div class="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
-                <label class="flex flex-col min-w-40 flex-1">
-                  <p class="text-[#121516] text-base font-medium leading-normal pb-2">Current Energy Level (1-10)</p>
-                  <select
-                    name="energyLevel"
-                    required
-                    class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121516] focus:outline-0 focus:ring-0 border border-[#dde1e3] bg-white focus:border-[#dde1e3] h-14 bg-[image:--select-button-svg] placeholder:text-[#6a7881] p-[15px] text-base font-normal leading-normal"
-                  >
-                    <option value="">Select Level</option>
-                    <option value="1">1 - Very Low</option>
-                    <option value="2">2 - Low</option>
-                    <option value="3">3 - Below Average</option>
-                    <option value="4">4 - Slightly Below Average</option>
-                    <option value="5">5 - Average</option>
-                    <option value="6">6 - Slightly Above Average</option>
-                    <option value="7">7 - Above Average</option>
-                    <option value="8">8 - High</option>
-                    <option value="9">9 - Very High</option>
-                    <option value="10">10 - Extremely High</option>
-                  </select>
-                </label>
-              </div>
-              
-              <h3 class="text-[#121516] text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4">Detailed Feedback</h3>
-              
-              <!-- Factors Affecting Motivation -->
-              <div class="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
-                <label class="flex flex-col min-w-40 flex-1">
-                  <p class="text-[#121516] text-base font-medium leading-normal pb-2">Factors Affecting Motivation</p>
-                  <textarea
-                    name="motivationFactors"
-                    placeholder="Please describe the factors that influence your motivation at work."
-                    class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121516] focus:outline-0 focus:ring-0 border border-[#dde1e3] bg-white focus:border-[#dde1e3] min-h-36 placeholder:text-[#6a7881] p-[15px] text-base font-normal leading-normal"
-                  ></textarea>
-                </label>
-              </div>
-              
-              <!-- Factors Affecting Energy -->
-              <div class="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
-                <label class="flex flex-col min-w-40 flex-1">
-                  <p class="text-[#121516] text-base font-medium leading-normal pb-2">Factors Affecting Energy Levels</p>
-                  <textarea
-                    name="energyFactors"
-                    placeholder="Please describe the factors that influence your energy levels at work."
-                    class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121516] focus:outline-0 focus:ring-0 border border-[#dde1e3] bg-white focus:border-[#dde1e3] min-h-36 placeholder:text-[#6a7881] p-[15px] text-base font-normal leading-normal"
-                  ></textarea>
-                </label>
-              </div>
-              
-              <h3 class="text-[#121516] text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4">Suggestions</h3>
-              
-              <!-- Improvement Suggestions -->
-              <div class="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
-                <label class="flex flex-col min-w-40 flex-1">
-                  <p class="text-[#121516] text-base font-medium leading-normal pb-2">Suggestions for Improvement</p>
-                  <textarea
-                    name="suggestions"
-                    placeholder="Do you have any suggestions on how we can improve motivation and energy levels?"
-                    class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121516] focus:outline-0 focus:ring-0 border border-[#dde1e3] bg-white focus:border-[#dde1e3] min-h-36 placeholder:text-[#6a7881] p-[15px] text-base font-normal leading-normal"
-                  ></textarea>
-                </label>
-              </div>
-              
-              <div class="flex px-4 py-3 justify-end">
-                <button
-                  type="submit"
-                  id="submitButton"
-                  class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-10 px-4 bg-[#3f8cbf] text-white text-sm font-bold leading-normal tracking-[0.015em] disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <span class="truncate">Submit Feedback</span>
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Utility Consumption Tracker</title>
     
-    <script>
-      async function submitFeedback(event) {
-        event.preventDefault();
-        
-        const submitButton = document.getElementById('submitButton');
-        const successMessage = document.getElementById('successMessage');
-        const errorMessage = document.getElementById('errorMessage');
-        
-        // Hide previous messages
-        successMessage.classList.add('hidden');
-        errorMessage.classList.add('hidden');
-        
-        // Disable submit button
-        submitButton.disabled = true;
-        submitButton.innerHTML = '<span class="truncate">Submitting...</span>';
-        
-        try {
-          const formData = new FormData(event.target);
-          const feedbackData = {
-            employeeName: formData.get('employeeName') || 'Anonymous',
-            department: formData.get('department'),
-            motivationLevel: parseInt(formData.get('motivationLevel')),
-            energyLevel: parseInt(formData.get('energyLevel')),
-            motivationFactors: formData.get('motivationFactors'),
-            energyFactors: formData.get('energyFactors'),
-            suggestions: formData.get('suggestions'),
-            timestamp: new Date().toISOString()
-          };
-          
-          const response = await fetch('/api/submit-feedback', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(feedbackData),
-          });
-          
-          if (response.ok) {
-            successMessage.classList.remove('hidden');
-            event.target.reset();
-            // Scroll to success message
-            successMessage.scrollIntoView({ behavior: 'smooth' });
-          } else {
-            throw new Error('Failed to submit feedback');
-          }
-        } catch (error) {
-          console.error('Error submitting feedback:', error);
-          errorMessage.classList.remove('hidden');
-          errorMessage.scrollIntoView({ behavior: 'smooth' });
-        } finally {
-          // Re-enable submit button
-          submitButton.disabled = false;
-          submitButton.innerHTML = '<span class="truncate">Submit Feedback</span>';
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
         }
-      }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .card-shadow {
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .input-focus {
+            transition: all 0.3s ease;
+        }
+        
+        .input-focus:focus {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+        
+        .icon-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .animate-pulse-soft {
+            animation: pulse-soft 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        
+        @keyframes pulse-soft {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.8;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <header class="gradient-bg text-white shadow-lg">
+        <div class="container mx-auto px-4 py-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <i class="fas fa-tachometer-alt text-3xl"></i>
+                    <h1 class="text-2xl font-bold">Utility Consumption Tracker</h1>
+                </div>
+                <nav class="flex space-x-6">
+                    <a href="/" class="hover:text-blue-200 transition-colors duration-200 flex items-center space-x-1">
+                        <i class="fas fa-home"></i>
+                        <span>Home</span>
+                    </a>
+                    <a href="/dashboard" class="hover:text-blue-200 transition-colors duration-200 flex items-center space-x-1">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <div class="max-w-2xl mx-auto">
+            <!-- Page Title -->
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold text-gray-800 mb-3">Submit Meter Readings</h2>
+                <p class="text-gray-600">Enter your current energy and water meter readings to track consumption patterns</p>
+            </div>
+
+            <!-- Success/Error Messages -->
+            <div id="successMessage" class="hidden mb-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg flex items-center">
+                <i class="fas fa-check-circle mr-3 text-green-500"></i>
+                <div>
+                    <p class="font-semibold">Success!</p>
+                    <p>Your meter reading has been submitted successfully.</p>
+                </div>
+            </div>
+            
+            <div id="errorMessage" class="hidden mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg flex items-center">
+                <i class="fas fa-exclamation-circle mr-3 text-red-500"></i>
+                <div>
+                    <p class="font-semibold">Error!</p>
+                    <p>There was an error submitting your reading. Please try again.</p>
+                </div>
+            </div>
+
+            <!-- Form Card -->
+            <div class="bg-white rounded-xl card-shadow p-8">
+                <form id="meterForm" onsubmit="submitReading(event)">
+                    <!-- Date Field -->
+                    <div class="mb-6">
+                        <label class="block text-gray-700 font-semibold mb-2 flex items-center">
+                            <i class="fas fa-calendar-alt icon-gradient mr-2"></i>
+                            Reading Date
+                        </label>
+                        <input
+                            type="date"
+                            name="date"
+                            required
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 input-focus"
+                        />
+                    </div>
+
+                    <!-- Energy Meters Section -->
+                    <div class="mb-8">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                            <i class="fas fa-bolt icon-gradient mr-2"></i>
+                            Energy Meters (kWh)
+                        </h3>
+                        
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <!-- Energy Meter 1 -->
+                            <div>
+                                <label class="block text-gray-700 font-medium mb-2 flex items-center">
+                                    <i class="fas fa-plug text-yellow-500 mr-2"></i>
+                                    Energy Meter 1
+                                </label>
+                                <input
+                                    type="number"
+                                    name="energyMeter1"
+                                    step="0.01"
+                                    min="0"
+                                    required
+                                    placeholder="0.00"
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 input-focus"
+                                />
+                            </div>
+
+                            <!-- Energy Meter 2 -->
+                            <div>
+                                <label class="block text-gray-700 font-medium mb-2 flex items-center">
+                                    <i class="fas fa-plug text-yellow-500 mr-2"></i>
+                                    Energy Meter 2
+                                </label>
+                                <input
+                                    type="number"
+                                    name="energyMeter2"
+                                    step="0.01"
+                                    min="0"
+                                    required
+                                    placeholder="0.00"
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 input-focus"
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Water Meter Section -->
+                    <div class="mb-8">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                            <i class="fas fa-tint icon-gradient mr-2"></i>
+                            Water Meter (Liters)
+                        </h3>
+                        
+                        <div>
+                            <label class="block text-gray-700 font-medium mb-2 flex items-center">
+                                <i class="fas fa-water text-blue-500 mr-2"></i>
+                                Water Consumption
+                            </label>
+                            <input
+                                type="number"
+                                name="waterMeter"
+                                step="0.01"
+                                min="0"
+                                required
+                                placeholder="0.00"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 input-focus"
+                            />
+                        </div>
+                    </div>
+
+                    <!-- Optional Fields -->
+                    <div class="mb-8">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                            <i class="fas fa-info-circle icon-gradient mr-2"></i>
+                            Additional Information (Optional)
+                        </h3>
+                        
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <!-- Location -->
+                            <div>
+                                <label class="block text-gray-700 font-medium mb-2 flex items-center">
+                                    <i class="fas fa-map-marker-alt text-red-500 mr-2"></i>
+                                    Location
+                                </label>
+                                <input
+                                    type="text"
+                                    name="location"
+                                    placeholder="e.g., Main Building, House A"
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 input-focus"
+                                />
+                            </div>
+
+                            <!-- Notes -->
+                            <div>
+                                <label class="block text-gray-700 font-medium mb-2 flex items-center">
+                                    <i class="fas fa-sticky-note text-green-500 mr-2"></i>
+                                    Notes
+                                </label>
+                                <textarea
+                                    name="notes"
+                                    rows="3"
+                                    placeholder="Any additional notes or observations"
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 input-focus resize-none"
+                                ></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="text-center">
+                        <button
+                            type="submit"
+                            id="submitButton"
+                            class="gradient-bg text-white px-8 py-3 rounded-lg font-semibold hover:opacity-90 transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center mx-auto"
+                        >
+                            <i class="fas fa-paper-plane mr-2"></i>
+                            <span>Submit Reading</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Quick Stats Card -->
+            <div class="mt-8 bg-white rounded-xl card-shadow p-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                    <i class="fas fa-chart-bar icon-gradient mr-2"></i>
+                    Quick Statistics
+                </h3>
+                <div id="quickStats" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="text-center p-4 bg-blue-50 rounded-lg">
+                        <i class="fas fa-database text-blue-500 text-2xl mb-2"></i>
+                        <p class="text-sm text-gray-600">Total Readings</p>
+                        <p class="text-xl font-bold text-blue-600" id="totalReadings">-</p>
+                    </div>
+                    <div class="text-center p-4 bg-yellow-50 rounded-lg">
+                        <i class="fas fa-bolt text-yellow-500 text-2xl mb-2"></i>
+                        <p class="text-sm text-gray-600">Avg Daily Energy</p>
+                        <p class="text-xl font-bold text-yellow-600" id="avgEnergy">- kWh</p>
+                    </div>
+                    <div class="text-center p-4 bg-blue-50 rounded-lg">
+                        <i class="fas fa-tint text-blue-500 text-2xl mb-2"></i>
+                        <p class="text-sm text-gray-600">Avg Daily Water</p>
+                        <p class="text-xl font-bold text-blue-600" id="avgWater">- L</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Set today's date as default
+        document.addEventListener('DOMContentLoaded', function() {
+            const dateInput = document.querySelector('input[name="date"]');
+            const today = new Date().toISOString().split('T')[0];
+            dateInput.value = today;
+            
+            // Load quick stats
+            loadQuickStats();
+        });
+
+        async function loadQuickStats() {
+            try {
+                const response = await fetch('/api/statistics');
+                if (response.ok) {
+                    const stats = await response.json();
+                    document.getElementById('totalReadings').textContent = stats.totalReadings || 0;
+                    document.getElementById('avgEnergy').textContent = 
+                        stats.averageDailyEnergy ? stats.averageDailyEnergy.toFixed(2) + ' kWh' : '0 kWh';
+                    document.getElementById('avgWater').textContent = 
+                        stats.averageDailyWater ? stats.averageDailyWater.toFixed(2) + ' L' : '0 L';
+                }
+            } catch (error) {
+                console.error('Error loading quick stats:', error);
+            }
+        }
+
+        async function submitReading(event) {
+            event.preventDefault();
+            
+            const submitButton = document.getElementById('submitButton');
+            const successMessage = document.getElementById('successMessage');
+            const errorMessage = document.getElementById('errorMessage');
+            
+            // Hide previous messages
+            successMessage.classList.add('hidden');
+            errorMessage.classList.add('hidden');
+            
+            // Disable submit button and show loading
+            submitButton.disabled = true;
+            submitButton.innerHTML = `
+                <i class="fas fa-spinner fa-spin mr-2"></i>
+                <span>Submitting...</span>
+            `;
+            
+            try {
+                const formData = new FormData(event.target);
+                const readingData = {
+                    date: formData.get('date'),
+                    energyMeter1: parseFloat(formData.get('energyMeter1')),
+                    energyMeter2: parseFloat(formData.get('energyMeter2')),
+                    waterMeter: parseFloat(formData.get('waterMeter')),
+                    location: formData.get('location') || '',
+                    notes: formData.get('notes') || ''
+                };
+                
+                const response = await fetch('/api/submit-reading', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(readingData),
+                });
+                
+                if (response.ok) {
+                    successMessage.classList.remove('hidden');
+                    event.target.reset();
+                    
+                    // Reset date to today
+                    const today = new Date().toISOString().split('T')[0];
+                    document.querySelector('input[name="date"]').value = today;
+                    
+                    // Reload quick stats
+                    loadQuickStats();
+                    
+                    // Scroll to success message
+                    successMessage.scrollIntoView({ behavior: 'smooth' });
+                } else {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Failed to submit reading');
+                }
+            } catch (error) {
+                console.error('Error submitting reading:', error);
+                errorMessage.classList.remove('hidden');
+                errorMessage.scrollIntoView({ behavior: 'smooth' });
+            } finally {
+                // Re-enable submit button
+                submitButton.disabled = false;
+                submitButton.innerHTML = `
+                    <i class="fas fa-paper-plane mr-2"></i>
+                    <span>Submit Reading</span>
+                `;
+            }
+        }
     </script>
-  </body>
+</body>
 </html>

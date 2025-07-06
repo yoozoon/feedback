@@ -1,0 +1,22 @@
+[
+  {
+    "id": "456b4672-e4d6-4d72-a620-84c172330b72",
+    "date": "2024-01-15",
+    "energyMeter1": 1250.5,
+    "energyMeter2": 890.25,
+    "waterMeter": 45678.9,
+    "location": "Main Building",
+    "notes": "Initial reading",
+    "submittedAt": "2025-07-06T13:44:29.549Z"
+  },
+  {
+    "id": "edd051bf-2671-4427-8c55-6e71238af4bc",
+    "date": "2024-01-16",
+    "energyMeter1": 1265.8,
+    "energyMeter2": 905.75,
+    "waterMeter": 45789.5,
+    "location": "Main Building",
+    "notes": "Second reading",
+    "submittedAt": "2025-07-06T13:44:35.377Z"
+  }
+]
