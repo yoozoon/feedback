@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="" />
+    <link
+      rel="stylesheet"
+      as="style"
+      onload="this.rel='stylesheet'"
+      href="https://fonts.googleapis.com/css2?display=swap&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900&amp;family=Public+Sans%3Awght%40400%3B500%3B700%3B900"
+    />
+    <title>PulseCheck Dashboard</title>
+    <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64," />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .stat-card {
+            @apply bg-white rounded-lg shadow-md p-6 border border-gray-200;
+        }
+        .chart-container {
+            @apply bg-white rounded-lg shadow-md p-6 border border-gray-200;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="min-h-screen" style="font-family: 'Public Sans', 'Noto Sans', sans-serif;">
+        <!-- Header -->
+        <header class="bg-white shadow-sm border-b border-gray-200">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center py-4">
+                    <div class="flex items-center gap-4">
+                        <div class="w-8 h-8">
+                            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M44 11.2727C44 14.0109 39.8386 16.3957 33.69 17.6364C39.8386 18.877 44 21.2618 44 24C44 26.7382 39.8386 29.123 33.69 30.3636C39.8386 31.6043 44 33.9891 44 36.7273C44 40.7439 35.0457 44 24 44C12.9543 44 4 40.7439 4 36.7273C4 33.9891 8.16144 31.6043 14.31 30.3636C8.16144 29.123 4 26.7382 4 24C4 21.2618 8.16144 18.877 14.31 17.6364C8.16144 16.3957 4 14.0109 4 11.2727C4 7.25611 12.9543 4 24 4C35.0457 4 44 7.25611 44 11.2727Z" fill="#3f8cbf"></path>
+                            </svg>
+                        </div>
+                        <h1 class="text-2xl font-bold text-gray-900">PulseCheck Dashboard</h1>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <a href="/" class="text-gray-600 hover:text-gray-900 font-medium">Back to Form</a>
+                        <button id="exportBtn" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 font-medium">
+                            Export CSV
+                        </button>
+                        <button id="refreshBtn" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 font-medium">
+                            Refresh
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <!-- Loading State -->
+            <div id="loading" class="text-center py-8">
+                <div class="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto"></div>
+                <p class="mt-4 text-gray-600">Loading dashboard...</p>
+            </div>
+
+            <!-- Dashboard Content -->
+            <div id="dashboard" class="hidden">
+                <!-- Summary Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <div class="stat-card">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-blue-100">
+                                <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                </svg>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm text-gray-600">Total Feedback</p>
+                                <p id="totalFeedback" class="text-2xl font-bold text-gray-900">0</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-green-100">
+                                <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                </svg>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm text-gray-600">Avg Motivation</p>
+                                <p id="avgMotivation" class="text-2xl font-bold text-gray-900">0</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-yellow-100">
+                                <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                                </svg>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm text-gray-600">Avg Energy</p>
+                                <p id="avgEnergy" class="text-2xl font-bold text-gray-900">0</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-purple-100">
+                                <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                                </svg>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm text-gray-600">Departments</p>
+                                <p id="totalDepartments" class="text-2xl font-bold text-gray-900">0</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Section -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                    <!-- Motivation Distribution Chart -->
+                    <div class="chart-container">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Motivation Level Distribution</h3>
+                        <div class="h-64">
+                            <canvas id="motivationChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Energy Distribution Chart -->
+                    <div class="chart-container">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Energy Level Distribution</h3>
+                        <div class="h-64">
+                            <canvas id="energyChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Department Statistics -->
+                <div class="chart-container mb-8">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Department Statistics</h3>
+                    <div class="h-64">
+                        <canvas id="departmentChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Department Details Table -->
+                <div class="chart-container">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Department Details</h3>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full table-auto">
+                            <thead>
+                                <tr class="bg-gray-50">
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Department</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Responses</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Avg Motivation</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Avg Energy</th>
+                                </tr>
+                            </thead>
+                            <tbody id="departmentTable" class="bg-white divide-y divide-gray-200">
+                                <!-- Table rows will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Last Updated -->
+                <div class="mt-8 text-center text-sm text-gray-500">
+                    Last updated: <span id="lastUpdated">-</span>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        let motivationChart, energyChart, departmentChart;
+
+        async function loadDashboard() {
+            try {
+                const response = await fetch('/api/statistics');
+                const stats = await response.json();
+                
+                // Update summary cards
+                document.getElementById('totalFeedback').textContent = stats.totalFeedbacks;
+                document.getElementById('avgMotivation').textContent = stats.motivationStats.average.toFixed(1);
+                document.getElementById('avgEnergy').textContent = stats.energyStats.average.toFixed(1);
+                document.getElementById('totalDepartments').textContent = Object.keys(stats.departmentStats).length;
+                document.getElementById('lastUpdated').textContent = new Date(stats.lastUpdated).toLocaleString();
+
+                // Create charts
+                createMotivationChart(stats.motivationStats.distribution);
+                createEnergyChart(stats.energyStats.distribution);
+                createDepartmentChart(stats.departmentStats);
+                
+                // Update department table
+                updateDepartmentTable(stats.departmentStats);
+
+                // Show dashboard
+                document.getElementById('loading').classList.add('hidden');
+                document.getElementById('dashboard').classList.remove('hidden');
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+                document.getElementById('loading').innerHTML = '<p class="text-red-600">Error loading dashboard. Please try again.</p>';
+            }
+        }
+
+        function createMotivationChart(distribution) {
+            const ctx = document.getElementById('motivationChart').getContext('2d');
+            if (motivationChart) motivationChart.destroy();
+            
+            motivationChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(distribution),
+                    datasets: [{
+                        label: 'Number of Responses',
+                        data: Object.values(distribution),
+                        backgroundColor: 'rgba(34, 197, 94, 0.6)',
+                        borderColor: 'rgba(34, 197, 94, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function createEnergyChart(distribution) {
+            const ctx = document.getElementById('energyChart').getContext('2d');
+            if (energyChart) energyChart.destroy();
+            
+            energyChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(distribution),
+                    datasets: [{
+                        label: 'Number of Responses',
+                        data: Object.values(distribution),
+                        backgroundColor: 'rgba(251, 191, 36, 0.6)',
+                        borderColor: 'rgba(251, 191, 36, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function createDepartmentChart(departmentStats) {
+            const ctx = document.getElementById('departmentChart').getContext('2d');
+            if (departmentChart) departmentChart.destroy();
+            
+            const departments = Object.keys(departmentStats);
+            const motivationData = departments.map(dept => departmentStats[dept].avgMotivation);
+            const energyData = departments.map(dept => departmentStats[dept].avgEnergy);
+            
+            departmentChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: departments,
+                    datasets: [{
+                        label: 'Average Motivation',
+                        data: motivationData,
+                        backgroundColor: 'rgba(34, 197, 94, 0.6)',
+                        borderColor: 'rgba(34, 197, 94, 1)',
+                        borderWidth: 1
+                    }, {
+                        label: 'Average Energy',
+                        data: energyData,
+                        backgroundColor: 'rgba(251, 191, 36, 0.6)',
+                        borderColor: 'rgba(251, 191, 36, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 10
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateDepartmentTable(departmentStats) {
+            const tableBody = document.getElementById('departmentTable');
+            tableBody.innerHTML = '';
+            
+            Object.entries(departmentStats).forEach(([dept, stats]) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${dept}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${stats.count}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${stats.avgMotivation.toFixed(1)}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${stats.avgEnergy.toFixed(1)}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Event listeners
+        document.getElementById('refreshBtn').addEventListener('click', loadDashboard);
+        
+        document.getElementById('exportBtn').addEventListener('click', async () => {
+            try {
+                const response = await fetch('/api/export-csv');
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'feedback_data.csv';
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                } else {
+                    alert('Error exporting data. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error exporting CSV:', error);
+                alert('Error exporting data. Please try again.');
+            }
+        });
+
+        // Load dashboard on page load
+        loadDashboard();
+    </script>
+</body>
+</html>
